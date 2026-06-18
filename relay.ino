@@ -4,8 +4,8 @@
 const char* ssid = "David";
 const char* password = "gunawantj";
 
-const char* host = "192.168.1.7";
-const uint16_t port = 3000;
+const char* host = "lamp.maulanaibnu.my.id";
+const uint16_t port = 443;
 
 WebSocketsClient webSocket;
 
@@ -61,7 +61,7 @@ void setup()
     Serial.println();
     Serial.println("WiFi Connected");
 
-    webSocket.begin(host,port,"/");
+    webSocket.beginSSL(host,port,"/");
     webSocket.onEvent(webSocketEvent);
 }
 
