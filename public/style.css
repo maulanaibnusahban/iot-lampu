@@ -1,0 +1,694 @@
+/* Modern Slate & Glow Design System */
+:root {
+  --bg-color: #070a13;
+  --panel-bg: rgba(15, 23, 42, 0.65);
+  --panel-border: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --color-on: #eab308;
+  --color-on-glow: rgba(234, 179, 8, 0.4);
+  --color-on-glow-soft: rgba(234, 179, 8, 0.15);
+
+  --color-off: #334155;
+  --color-off-glow: rgba(51, 65, 85, 0.2);
+
+  --color-accent: #3b82f6;
+  --color-accent-hover: #2563eb;
+  --color-accent-glow: rgba(59, 130, 246, 0.35);
+
+  --color-success: #10b981;
+  --color-error: #ef4444;
+  --color-warning: #f59e0b;
+
+  --font-family: "Plus Jakarta Sans", sans-serif;
+
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-snap: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Base Styles & Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: hidden;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  padding: 1rem;
+}
+
+/* Ambient Ambient Glow behind elements */
+.ambient-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  height: 90vh;
+  max-width: 800px;
+  max-height: 800px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-off-glow) 0%, rgba(7, 10, 19, 0) 70%);
+  z-index: -2;
+  filter: blur(80px);
+  transition: var(--transition-smooth);
+}
+
+body.state-on .ambient-glow {
+  background: radial-gradient(circle, var(--color-on-glow-soft) 0%, rgba(7, 10, 19, 0) 70%);
+  filter: blur(100px);
+}
+
+/* App Container Layout */
+.app-container {
+  width: 100%;
+  max-width: 380px; /* Slimmer max-width for better vertical ratio */
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  z-index: 1;
+}
+
+/* Header Styles - Centered pill */
+.app-header {
+  display: flex;
+  justify-content: center; /* Center the status badge */
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 99px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Status Badge */
+.status-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-warning);
+  transition: var(--transition-smooth);
+}
+
+/* Status Badge Modifications based on WebSocket state */
+.status-badge.connected {
+  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(16, 185, 129, 0.06);
+  color: var(--color-success);
+}
+.status-badge.connected .status-dot {
+  background-color: var(--color-success);
+}
+
+.status-badge.disconnected {
+  border-color: rgba(239, 68, 68, 0.2);
+  background: rgba(239, 68, 68, 0.06);
+  color: var(--color-error);
+}
+.status-badge.disconnected .status-dot {
+  background-color: var(--color-error);
+  animation: blinkRed 1.5s infinite ease-in-out;
+}
+
+@keyframes blinkRed {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Control Card Container */
+.control-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 28px;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  padding: 1.5rem 1.75rem; /* Compact padding */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem; /* Reduced gap for compact screens */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Lamp Visualization styling */
+.lamp-visualization {
+  position: relative;
+  width: 100%;
+  height: 120px; /* Reduced from 180px */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.lamp-svg {
+  height: 100%;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+  z-index: 10;
+}
+
+/* SVG Elements styles */
+.hanger,
+.socket,
+.socket-band,
+.filament-joint {
+  transition: var(--transition-smooth);
+}
+
+.bulb-glass {
+  transition: var(--transition-smooth);
+  fill: rgba(30, 41, 59, 0.4);
+}
+
+.bulb-filament {
+  transition: var(--transition-smooth);
+  stroke: var(--text-muted);
+}
+
+.bulb-glow-circle {
+  transition: var(--transition-smooth);
+  fill: none;
+}
+
+/* Lamp ON state SVG overrides */
+body.state-on .bulb-glass {
+  fill: rgba(253, 224, 71, 0.25);
+  stroke: var(--color-on);
+}
+
+body.state-on .bulb-filament {
+  stroke: var(--color-on);
+  filter: drop-shadow(0 0 8px var(--color-on-glow));
+}
+
+body.state-on .filament-joint {
+  fill: var(--color-on);
+}
+
+body.state-on .bulb-glow-circle {
+  fill: rgba(253, 224, 71, 0.12);
+  filter: blur(12px);
+  animation: bulbPulse 4s infinite ease-in-out;
+}
+
+@keyframes bulbPulse {
+  0%,
+  100% {
+    transform: scale(1) translate(0, 0);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.05) translate(-2px, -3px);
+    opacity: 1;
+  }
+}
+
+/* Light Rays */
+.light-ray-container {
+  position: absolute;
+  top: 55px;
+  width: 100%;
+  height: 70px;
+  pointer-events: none;
+  opacity: 0;
+  transition: var(--transition-smooth);
+}
+
+body.state-on .light-ray-container {
+  opacity: 1;
+}
+
+.ray {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 4px;
+  height: 90px;
+  background: linear-gradient(to top, rgba(234, 179, 8, 0.2), rgba(234, 179, 8, 0));
+  border-radius: 50%;
+  transform-origin: bottom center;
+}
+
+.ray-1 {
+  transform: translateX(-50%) rotate(-45deg) scaleY(0.7);
+}
+.ray-2 {
+  transform: translateX(-50%) rotate(0deg) scaleY(0.9);
+}
+.ray-3 {
+  transform: translateX(-50%) rotate(45deg) scaleY(0.7);
+}
+
+/* Lamp Status Info */
+.lamp-status-container {
+  text-align: center;
+}
+
+.lamp-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.lamp-state-text {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--text-secondary);
+  transition: var(--transition-smooth);
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+body.state-on .lamp-state-text {
+  color: var(--color-on);
+  background: var(--color-on-glow-soft);
+  border-color: rgba(234, 179, 8, 0.15);
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.08);
+}
+
+/* Switch UI Component */
+.switch-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem; /* Reduced gap */
+  width: 100%;
+}
+
+.switch-guide {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  transition: var(--transition-smooth);
+  text-align: center;
+}
+
+.switch-guide svg {
+  width: 9px;
+  height: 9px;
+  animation: bounceUpDown 2s infinite ease-in-out;
+}
+
+.down-label svg {
+  animation: bounceDownUp 2s infinite ease-in-out;
+}
+
+@keyframes bounceUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
+@keyframes bounceDownUp {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+body.state-on .up-label {
+  opacity: 0.3;
+}
+body:not(.state-on) .down-label {
+  opacity: 0.3;
+}
+
+/* Switch Track styling */
+.switch-track-wrapper {
+  padding: 6px;
+  background: linear-gradient(145deg, #111827, #030712);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.6),
+    0 3px 15px rgba(0, 0, 0, 0.25);
+  border-radius: 99px;
+}
+
+.switch-track {
+  width: 66px;
+  height: 180px; /* Reduced from 240px */
+  background: rgba(2, 6, 23, 0.85);
+  border-radius: 99px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.9);
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.switch-track:active {
+  cursor: grabbing;
+}
+
+.track-center-line {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  transform: translateX(-50%);
+  background: linear-gradient(to bottom, rgba(234, 179, 8, 0.1) 0%, rgba(255, 255, 255, 0.05) 50%, rgba(234, 179, 8, 0.1) 100%);
+  z-index: 1;
+}
+
+.track-label {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.2;
+  transition: var(--transition-smooth);
+}
+
+.track-label.on-text {
+  top: 15px;
+  color: var(--color-on);
+}
+
+.track-label.off-text {
+  bottom: 15px;
+  color: var(--text-secondary);
+}
+
+body.state-on .track-label.on-text {
+  opacity: 1;
+  text-shadow: 0 0 8px var(--color-on-glow);
+}
+
+body:not(.state-on) .track-label.off-text {
+  opacity: 0.8;
+}
+
+/* Background fill color in the track representing drag position */
+.track-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(to top, rgba(234, 179, 8, 0) 0%, rgba(234, 179, 8, 0.15) 100%);
+  border-radius: 0 0 99px 99px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Switch Handle styling */
+.switch-handle {
+  position: absolute;
+  left: 5px;
+  bottom: 5px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  z-index: 3;
+  transition: transform 0.1s ease-out;
+}
+
+.switch-handle.snapping {
+  transition: bottom 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.handle-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #475569 0%, #1e293b 50%, #0f172a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.6),
+    inset 0 1px 1px rgba(255, 255, 255, 0.12),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.switch-handle:hover .handle-inner {
+  background: linear-gradient(135deg, #576579 0%, #2e394b 50%, #171f30 100%);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.7),
+    inset 0 1px 1px rgba(255, 255, 255, 0.15),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.7);
+}
+
+/* Center Indicator ring on the switch */
+.handle-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-off);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+  margin-top: 3px;
+  transition: var(--transition-smooth);
+}
+
+body.state-on .handle-indicator {
+  background-color: var(--color-on);
+  box-shadow:
+    0 0 8px var(--color-on),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+/* Metal ridges for a tactile physical look */
+.handle-ridges {
+  display: flex;
+  gap: 2.5px;
+}
+
+.handle-ridges span {
+  width: 2.5px;
+  height: 14px;
+  background: rgba(0, 0, 0, 0.4);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 99px;
+}
+
+/* Console Drawer styling */
+.console-drawer {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid var(--panel-border);
+  border-radius: 18px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  overflow: hidden;
+  transition: var(--transition-smooth);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.console-toggle {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.65rem 1.15rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-secondary);
+  font-family: var(--font-family);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  outline: none;
+}
+
+.console-toggle:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.console-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.console-title svg {
+  width: 12px;
+  height: 12px;
+}
+
+.console-chevron svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s ease;
+}
+
+/* Opened drawer state styles */
+.console-drawer.open .console-chevron svg {
+  transform: rotate(-180deg);
+}
+
+.console-content {
+  height: 0;
+  overflow: hidden; /* CRITICAL: Prevents content spill when height is 0 */
+  transition: var(--transition-smooth);
+}
+
+.console-drawer.open .console-content {
+  height: 110px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.console-logs {
+  height: 100%;
+  padding: 0.65rem 1.15rem;
+  overflow-y: auto;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.65rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  scroll-behavior: smooth;
+}
+
+/* Log entry coloring */
+.log-entry {
+  line-height: 1.35;
+  word-break: break-all;
+}
+
+.log-entry.system {
+  color: var(--text-muted);
+}
+
+.log-entry.sent {
+  color: var(--color-accent);
+}
+
+.log-entry.received {
+  color: var(--color-on);
+}
+
+.log-entry.error {
+  color: var(--color-error);
+}
+
+.log-entry.success {
+  color: var(--color-success);
+}
+
+/* Scrollbar customization for drawer logs */
+.console-logs::-webkit-scrollbar {
+  width: 4px;
+}
+
+.console-logs::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.console-logs::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.console-logs::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Media Queries & Responsive Layouts */
+@media (max-width: 480px) {
+  body {
+    align-items: center; /* Center vertically on mobile too for layout */
+    padding: 0.75rem;
+  }
+
+  .app-container {
+    max-width: 100%;
+    gap: 0.65rem;
+  }
+
+  .control-card {
+    padding: 1.25rem 1.25rem;
+    border-radius: 24px;
+    gap: 1rem;
+  }
+
+  .lamp-visualization {
+    height: 110px;
+  }
+
+  .switch-track {
+    height: 160px;
+    width: 60px;
+  }
+
+  .switch-handle {
+    width: 50px;
+    height: 50px;
+    left: 5px;
+    bottom: 5px;
+  }
+
+  .track-label {
+    font-size: 0.65rem;
+  }
+
+  .track-label.on-text {
+    top: 12px;
+  }
+
+  .track-label.off-text {
+    bottom: 12px;
+  }
+}

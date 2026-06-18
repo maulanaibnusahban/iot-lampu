@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Smart Lamp Control</title>
+    <!-- Google Fonts: Plus Jakarta Sans for clean typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- Ambient background glow behind the card -->
+    <div class="ambient-glow" id="ambientGlow"></div>
+
+    <div class="app-container">
+      <!-- Header with only the centered connection status badge -->
+      <header class="app-header">
+        <div class="status-badge" id="statusBadge">
+          <span class="status-dot"></span>
+          <span class="status-text">Menghubungkan</span>
+        </div>
+      </header>
+
+      <!-- Main Card Container -->
+      <main class="control-card">
+        <!-- Top Section: SVG Lamp Illustration -->
+        <div class="lamp-visualization">
+          <div class="light-ray-container">
+            <div class="ray ray-1"></div>
+            <div class="ray ray-2"></div>
+            <div class="ray ray-3"></div>
+          </div>
+
+          <svg class="lamp-svg" viewBox="0 0 200 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Hanger cord -->
+            <line class="hanger" x1="100" y1="0" x2="100" y2="70" stroke="#4a5568" stroke-width="3" />
+
+            <!-- Lamp Fixture Socket -->
+            <path
+              class="socket"
+              d="M85 70H115V85C115 87 113 89 110 89H90C87 89 85 87 85 85V70Z"
+              fill="#2d3748"
+              stroke="#1a202c"
+              stroke-width="2"
+            />
+            <rect class="socket-band" x="80" y="73" width="40" height="4" rx="2" fill="#4a5568" />
+
+            <!-- Outer Bulb Glass Glow (Dynamic effect in CSS) -->
+            <circle class="bulb-glow-circle" cx="100" cy="145" r="50" fill="none" />
+
+            <!-- Bulb glass body -->
+            <path
+              class="bulb-glass"
+              d="M100 95C75 95 60 115 60 145C60 170 75 185 85 195V205H115V195C125 185 140 170 140 145C140 115 125 95 100 95Z"
+              fill="#1e293b"
+              fill-opacity="0.5"
+              stroke="#475569"
+              stroke-width="3"
+              stroke-linejoin="round"
+            />
+
+            <!-- Glowing Filament (lights up in CSS) -->
+            <path
+              class="bulb-filament"
+              d="M88 165L93 135H107L112 165"
+              stroke="#475569"
+              stroke-width="3"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle class="filament-joint joint-l" cx="88" cy="165" r="2" fill="#475569" />
+            <circle class="filament-joint joint-r" cx="112" cy="165" r="2" fill="#475569" />
+
+            <!-- Highlights on the glass -->
+            <path
+              class="bulb-highlight"
+              d="M68 125C65 135 65 145 68 153"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+              opacity="0.15"
+            />
+          </svg>
+        </div>
+
+        <!-- Center Section: Title & Status Text -->
+        <div class="lamp-status-container">
+          <div class="lamp-state-text" id="stateText">LAMPU PADAM</div>
+        </div>
+
+        <!-- Bottom Section: Scroll Switch -->
+        <div class="switch-container">
+          <div class="switch-guide up-label">
+            <span>GESER KE ATAS UNTUK MENYALAKAN</span>
+          </div>
+
+          <div class="switch-track-wrapper">
+            <div class="switch-track" id="switchTrack">
+              <!-- Labels inside the track for visual design -->
+              <div class="track-label on-text">ON</div>
+              <div class="track-label off-text">OFF</div>
+
+              <!-- Guide rails inside the track -->
+              <div class="track-center-line"></div>
+
+              <!-- Glowing background that updates with handle position -->
+              <div class="track-fill" id="trackFill"></div>
+
+              <!-- Draggable handle -->
+              <div class="switch-handle" id="switchHandle">
+                <div class="handle-inner">
+                  <div class="handle-ridges">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                  <div class="handle-indicator"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="switch-guide down-label">
+            <span>GESER KE BAWAH UNTUK MEMATIKAN</span>
+          </div>
+        </div>
+      </main>
+
+      <!-- Console Drawer (Collapsible) -->
+      <div class="console-drawer" id="consoleDrawer">
+        <button class="console-toggle" id="consoleToggle">
+          <span class="console-title">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="4 17 10 11 4 5"></polyline>
+              <line x1="12" y1="19" x2="20" y2="19"></line>
+            </svg>
+            Console Log
+          </span>
+          <span class="console-chevron">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </span>
+        </button>
+        <div class="console-content">
+          <div class="console-logs" id="consoleLogs">
+            <div class="log-entry system">Sistem siap. Mencoba menghubungkan ke WebSocket...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
